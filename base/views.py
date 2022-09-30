@@ -12,6 +12,8 @@ from django.contrib.auth.models import User
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from django.contrib.auth.hashers import make_password
+
 from base import serializer
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -47,6 +49,20 @@ def getRoutes(request):
         '/api/products/<update>/<id>/'
     ]
     return Response(routes)
+
+@api_view(['POST'])
+def registerUser(request):
+    data = request.data
+    print('DATA:', data)
+    user = User.objects.create(
+        first_name = data['name'],
+        username = data['email'],
+        email = data['email'],
+        password = make_password(data['password']),
+    )
+    serializer = UserSerializerWithToken(user, many = False)
+    return Response(serializer.data)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
