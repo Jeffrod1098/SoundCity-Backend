@@ -3,9 +3,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from .models import Products
-from .products import products
-from .serializer import ProductsSerializer, UserSerializer, UserSerializerWithToken
+from base.serializer import UserSerializer, UserSerializerWithToken
 from django.contrib.auth.models import User
 
 # Create your views here.
@@ -17,6 +15,7 @@ from rest_framework import status
 from django.contrib.auth.hashers import make_password
 
 from base import serializer
+
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -83,16 +82,3 @@ def getUsers(request):
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)
-
-@api_view(['GET'])
-def getProducts(request):
-    products = Products.objects.all()
-    serializer = ProductsSerializer(products, many=True)
-    return Response(serializer.data)
-
-@api_view(['GET'])
-def getProduct(request, pk):
-    product = Products.objects.get(id = pk)
-    serializer = ProductsSerializer(product, many= False)
-    return Response(serializer.data)
-
